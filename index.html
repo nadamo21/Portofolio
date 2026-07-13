@@ -154,7 +154,11 @@
     .tgrid{grid-template-columns:1fr}
     .arr.prev{left:4px}.arr.next{right:4px}
     .contact{padding:34px 24px}
-    .hb em{width:64px}
+    .bar{height:auto;flex-wrap:wrap;padding:10px 0;gap:8px}
+    .mark{font-size:15px}
+    .tabs{width:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    .tabs a{flex-shrink:0;font-size:12px;padding:6px 12px;white-space:nowrap}
   }
   @media(prefers-reduced-motion:reduce){
     .track{transition:none}
@@ -1318,6 +1322,28 @@ document.querySelectorAll('[data-goto]').forEach(a=>{
   }
   draw();
 })();
+
+/* ===== render dashboards as one fixed layout, scaled to fit on phones ===== */
+function fitDashboards(){
+  const mobile = window.innerWidth <= 900;
+  document.querySelectorAll('.pv > .dash').forEach(d=>{
+    const pv = d.parentElement;
+    if(mobile){
+      d.style.width = '980px';
+      const w = pv.clientWidth - 32;
+      const s = w / 980;
+      d.style.transformOrigin = 'top left';
+      d.style.transform = 'scale(' + s + ')';
+      pv.style.height = (d.offsetHeight * s + 32) + 'px';
+      pv.style.overflow = 'hidden';
+    } else {
+      d.style.width=''; d.style.transform=''; pv.style.height=''; pv.style.overflow='';
+    }
+  });
+}
+window.addEventListener('resize', fitDashboards);
+window.addEventListener('load', ()=>{ fitDashboards(); setTimeout(fitDashboards, 500); });
+fitDashboards();
 </script>
 </body>
 </html>
